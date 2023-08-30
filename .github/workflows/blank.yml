@@ -1,0 +1,23 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  workflow_dispatch:
+      inputs:
+        deployDocs:
+          description: 'Deploy API Documentation'
+          required: true
+          default: 'Yes'
+          type: choice
+          options:
+          - Yes
+          - No
+
+jobs:
+  log-the-inputs:
+    if: ${{ inputs.deployDocs == 'Yes' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Log level: ${{ inputs.deployDocs }}"
