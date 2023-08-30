@@ -1,11 +1,8 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 on:
-  push:
-    branches: 
-      - main
+  schedule:
+    - cron:  '*/5 * * * *'
   workflow_dispatch:
       inputs:
         deployDocs:
@@ -18,9 +15,22 @@ on:
           - 'False'
 
 jobs:
-  log-the-inputs:
-    if: ${{ inputs.deployDocs == 'True' || inputs.deployDocs == '' }}
+   check_date:
     runs-on: ubuntu-latest
+    name: Check latest commit
+    outputs:
+      should_run: ${{ steps.should_run.outputs.should_run }}
     steps:
-      - run: |
-          echo "Log level: ${{ inputs.deployDocs }}"
+    - uses: actions/checkout@v2
+    - id: should_run
+      continue-on-error: true
+      name: check latest commit is less than a day
+      if: ${{ github.event_name == 'schedule' }}
+      run: test -z $(git rev-list  --after="24 hours"  ${{ github.sha }}) && echo "::set-output name=should_run::false"
+   log-the-inputs:
+     needs: check_date
+     if: ${{ (inputs.deployDocs == 'True' || inputs.deployDocs == '') && ${{ needs.check_date.outputs.should_run != 'false' }} }}
+     runs-on: ubuntu-latest
+     steps:
+       - run: |
+           echo "Log level: ${{ inputs.deployDocs }}"
