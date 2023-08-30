@@ -3,6 +3,9 @@
 name: CI
 
 on:
+  push:
+    branches: 
+      - develop
   workflow_dispatch:
       inputs:
         deployDocs:
@@ -16,7 +19,7 @@ on:
 
 jobs:
   log-the-inputs:
-    if: ${{ inputs.deployDocs == 'True' }}
+    if: ${{ inputs.deployDocs == 'True' || inputs.deployDocs == '' }}
     runs-on: ubuntu-latest
     steps:
       - run: |
