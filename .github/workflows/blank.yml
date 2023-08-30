@@ -8,15 +8,15 @@ on:
         deployDocs:
           description: 'Deploy API Documentation'
           required: true
-          default: 'Yess'
+          default: 'Yes'
           type: choice
           options:
-          - Yess
-          - Nos
+          - Yes
+          - No
 
 jobs:
   log-the-inputs:
-    if: ${{ inputs.deployDocs == 'Yess' }}
+    if: ${{ inputs.deployDocs == 'Yes' }}
     runs-on: ubuntu-latest
     steps:
       - run: |
